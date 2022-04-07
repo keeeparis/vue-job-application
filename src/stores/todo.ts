@@ -3,7 +3,7 @@ import { v4 } from 'uuid'
 
 interface Props {
   todo: Todo[],
-  filter: string
+  filter: 'all' | 'active' | 'completed'
 }
 
 type Todo = {
@@ -16,7 +16,7 @@ export const useTodoStore = defineStore({
   id: "todo",
   state: (): Props => ({
     todo: [],
-    filter: ''
+    filter: 'all'
   }),
   actions: {
     async loadTodos() {
@@ -26,11 +26,14 @@ export const useTodoStore = defineStore({
     },
     addTodo(mes: string) {
       const newTodo = {
-        active: true,
+        active: false,
         id: v4(),
         text: mes
       }
       this.todo.push(newTodo)
+    },
+    setFilter(category: Props['filter']) {
+      this.filter = category
     }
   },
 })

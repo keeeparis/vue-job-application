@@ -6,8 +6,10 @@ const store = useTodoStore()
 const message = ref('')
 
 const handleSumbit = () => {
-  store.addTodo(message.value)
-  message.value = ''
+  if (message.value) {
+    store.addTodo(message.value)
+    message.value = ''
+  }
 }
 
 onMounted(() => {
@@ -20,10 +22,55 @@ onMounted(() => {
   <main>
     <input v-model="message" placeholder="type todo..." />
     <button @click="handleSumbit">Add</button>
-    <div v-for="(todo, index) in store.todo">
-      {{ index + 1 }}
-      {{ todo.text }}
-      {{ todo.active }}
+    <div class="filters">
+      <button @click="store.setFilter('all')">All</button>
+      <button @click="store.setFilter('active')">Active</button>
+      <button @click="store.setFilter('completed')">Finished</button>
+    </div>
+    <div class="container">
+      <div v-if="store.filter === 'all'">
+        <div 
+          v-for="(todo, index) in store.todo" 
+          class="item"
+          :class="{ active: todo.active }"
+          :key="todo.id"
+        >
+          <p class="index">{{ index + 1 }}</p>
+          <p class="text">{{ todo.text }}</p>
+          <input type="checkbox" v-model="todo.active">
+        </div>
+      </div>
+
+      <div v-if="store.filter === 'active'">
+        <div 
+          v-for="(todo, index) in store.todo"
+          class="item"
+          :class="{ active: todo.active }"
+          :key="todo.id"
+        >
+          <div v-if="!todo.active" class="item">
+            <p class="index">{{ index + 1 }}</p>
+            <p class="text">{{ todo.text }}</p>
+            <input type="checkbox" v-model="todo.active">
+          </div>
+        </div>
+      </div>
+
+      <div v-if="store.filter === 'completed'">
+        <div 
+          v-for="(todo, index) in store.todo"
+          class="item"
+          :class="{ active: todo.active }"
+          :key="todo.id"
+        >
+          <div v-if="todo.active" class="item">
+            <p class="index">{{ index + 1 }}</p>
+            <p class="text">{{ todo.text }}</p>
+            <input type="checkbox" v-model="todo.active">
+          </div>
+        </div>
+      </div>
+
     </div>
   </main>
 </template>
@@ -37,5 +84,31 @@ onMounted(() => {
   padding: 2rem;
 
   font-weight: normal;
+}
+
+.filter {
+  display: flex;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+}
+
+.index {
+  flex-basis: 20px;
+}
+
+.text {
+  flex-basis: 100px;
+}
+
+.item.active p {
+  text-decoration: line-through;
 }
 </style>
