@@ -1,4 +1,5 @@
 import { defineStore } from "pinia"
+import { v4 } from 'uuid'
 
 interface Props {
   todo: Todo[],
@@ -7,7 +8,7 @@ interface Props {
 
 type Todo = {
   active: boolean,
-  id: number,
+  id: number | string,
   text: string
 }
 
@@ -23,5 +24,13 @@ export const useTodoStore = defineStore({
       const json = await response.json()
       this.todo = json
     },
+    addTodo(mes: string) {
+      const newTodo = {
+        active: true,
+        id: v4(),
+        text: mes
+      }
+      this.todo.push(newTodo)
+    }
   },
 })

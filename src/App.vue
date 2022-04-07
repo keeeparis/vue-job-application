@@ -1,8 +1,14 @@
 <script setup lang="ts">
-import { computed, reactive, onMounted } from 'vue'
+import { computed, reactive, onMounted, ref } from 'vue'
 import { useTodoStore } from './stores/todo';
 
 const store = useTodoStore()
+const message = ref('')
+
+const handleSumbit = () => {
+  store.addTodo(message.value)
+  message.value = ''
+}
 
 onMounted(() => {
   store.loadTodos()
@@ -12,8 +18,10 @@ onMounted(() => {
 
 <template>
   <main>
-    <div v-for="todo in store.todo">
-      {{ todo.id }}
+    <input v-model="message" placeholder="type todo..." />
+    <button @click="handleSumbit">Add</button>
+    <div v-for="(todo, index) in store.todo">
+      {{ index + 1 }}
       {{ todo.text }}
       {{ todo.active }}
     </div>
