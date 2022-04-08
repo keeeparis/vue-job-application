@@ -1,10 +1,18 @@
 <script setup lang="ts">
-import { computed, reactive, onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useTodoStore } from './stores/todo';
+import TodoList from './components/TodoList.vue';
+import Filters from './components/Filters.vue'
 
+// вызываем инстанс стора для извлечения 
+// списка туду и фильтра
 const store = useTodoStore()
+// создаем реф для инпута
 const message = ref('')
 
+// функция обработка сабмита. Если инпут не пустой,
+// то вызываем метод стора для создания туду,
+// меняем значение инпута на пустую строку
 const handleSumbit = () => {
   if (message.value) {
     store.addTodo(message.value)
@@ -12,66 +20,44 @@ const handleSumbit = () => {
   }
 }
 
+// создаем мемоизированную копию списка туду
+// отсортированного по значению фильтра
+const items = computed(() => {
+  return store.todo.filter((item) => {
+    switch (store.filter) {
+      case 'active':
+        return !item.active;
+      case 'completed':
+        return item.active;
+      default:
+        return true
+    }
+  })
+})
+
+// на маунт компонента вызываем метод стора
+// по загрузке туду с нашего API
 onMounted(() => {
   store.loadTodos()
 })
-
 </script>
 
 <template>
   <main>
-    <input v-model="message" placeholder="type todo..." />
-    <button @click="handleSumbit">Add</button>
-    <div class="filters">
-      <button @click="store.setFilter('all')">All</button>
-      <button @click="store.setFilter('active')">Active</button>
-      <button @click="store.setFilter('completed')">Finished</button>
-    </div>
-    <div class="container">
-      <div v-if="store.filter === 'all'">
-        <div 
-          v-for="(todo, index) in store.todo" 
-          class="item"
-          :class="{ active: todo.active }"
-          :key="todo.id"
-        >
-          <p class="index">{{ index + 1 }}</p>
-          <p class="text">{{ todo.text }}</p>
-          <input type="checkbox" v-model="todo.active">
-        </div>
-      </div>
+    <input 
+      v-model="message" 
+      placeholder="type todo..." 
+      class="input" 
+    />
+    <button @click="handleSumbit" class="add-button">Add</button>
 
-      <div v-if="store.filter === 'active'">
-        <div 
-          v-for="(todo, index) in store.todo"
-          class="item"
-          :class="{ active: todo.active }"
-          :key="todo.id"
-        >
-          <div v-if="!todo.active" class="item">
-            <p class="index">{{ index + 1 }}</p>
-            <p class="text">{{ todo.text }}</p>
-            <input type="checkbox" v-model="todo.active">
-          </div>
-        </div>
-      </div>
-
-      <div v-if="store.filter === 'completed'">
-        <div 
-          v-for="(todo, index) in store.todo"
-          class="item"
-          :class="{ active: todo.active }"
-          :key="todo.id"
-        >
-          <div v-if="todo.active" class="item">
-            <p class="index">{{ index + 1 }}</p>
-            <p class="text">{{ todo.text }}</p>
-            <input type="checkbox" v-model="todo.active">
-          </div>
-        </div>
-      </div>
-
-    </div>
+    <!-- Фильтры -->
+    <Filters />
+    
+    <!-- Список Туду -->
+    <TodoList 
+      :todos="items"
+    />
   </main>
 </template>
 
@@ -80,35 +66,25 @@ onMounted(() => {
 
 #app {
   max-width: 1280px;
-  margin: 0 auto;
+  margin: 100px auto 0;
   padding: 2rem;
-
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
   font-weight: normal;
 }
 
-.filter {
-  display: flex;
+.input {
+  padding: 16px 24px;
 }
 
-.container {
-  display: flex;
-  flex-direction: column;
+button {
+  padding: 16px;
+  cursor: pointer;
 }
 
-.item {
-  display: flex;
-  align-items: center;
+.add-button {
+  margin-left: 10px;
 }
 
-.index {
-  flex-basis: 20px;
-}
-
-.text {
-  flex-basis: 100px;
-}
-
-.item.active p {
-  text-decoration: line-through;
-}
 </style>
