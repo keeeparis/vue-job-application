@@ -1,11 +1,9 @@
-// тип для массива категорий
-interface categoryType {
+export interface categoryType {
     id: 'all' | 'active' | 'completed',
     name: string
 }
 
-// массив категорий
-const categories: categoryType[] = [
+export const categories: categoryType[] = [
     {
         id: 'all',
         name: 'All'
@@ -20,5 +18,3 @@ const categories: categoryType[] = [
     },
 
 ]
-
-export default categories

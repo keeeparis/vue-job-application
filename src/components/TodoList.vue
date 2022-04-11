@@ -1,25 +1,23 @@
 <script setup lang="ts">
-import { useTodoStore, type Todo } from '@/stores/todo'
+import type { Todo } from '@/stores/todo'
 
-// определяем пропсы
 defineProps<{
   todos: Todo[]
 }>()
+defineEmits<{
+  (e: 'deleteTodo', id: Todo['id']): void
+}>()
 
-// вызываем инстанс стора, чтобы забрать метод deleteTodo
-const store = useTodoStore()
 </script>
 
 <template>
   <div class="container">
-    <!-- итерируем по туду -->
     <div 
       v-for="(todo, index) in todos"
       :key="todo.id"
       class="item" 
       :class="{ active: todo.active }"
     >
-      <!-- чекбокс меняет свойство active у туду -->
       <input 
         type="checkbox" 
         class="checkbox"
@@ -29,9 +27,8 @@ const store = useTodoStore()
       >
       <p class="index">{{ index + 1 }}.</p>
       <p class="text">{{ todo.text }}</p>
-      <!-- на клик вызываем метод выше с id туду-->
-      <button 
-        @click="store.deleteTodo(todo.id)" 
+      <button
+        @click="$emit('deleteTodo', todo.id)"
         class="close-button"
       >
         x

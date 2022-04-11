@@ -1,18 +1,14 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { useTodoStore } from './stores/todo'
+import { useTodoStore, type Todo } from './stores/todo'
 import TodoList from './components/TodoList.vue'
 import Filters from './components/Filters.vue'
+import type { categoryType } from './data'
 
-// вызываем инстанс стора для извлечения 
-// списка туду и фильтра
 const store = useTodoStore()
-// создаем реф для инпута
+
 const message = ref('')
 
-// функция обработка сабмита. Если инпут не пустой,
-// то вызываем метод стора для создания туду,
-// меняем значение инпута на пустую строку
 const handleSumbit = () => {
   if (message.value) {
     store.addTodo(message.value)
@@ -20,8 +16,14 @@ const handleSumbit = () => {
   }
 }
 
-// создаем мемоизированную копию списка туду
-// отсортированного по значению фильтра
+const handleDelete = (id: Todo['id']) => {
+  store.deleteTodo(id)
+}
+
+const handleSetFilter = (id: categoryType['id']) => {
+  store.setFilter(id)
+}
+
 const items = computed(() => {
   return store.todo.filter((item) => {
     switch (store.filter) {
@@ -35,8 +37,6 @@ const items = computed(() => {
   })
 })
 
-// на маунт компонента вызываем метод стора
-// по загрузке туду с нашего API
 onMounted(() => {
   store.loadTodos()
 })
@@ -51,12 +51,13 @@ onMounted(() => {
     />
     <button @click="handleSumbit" class="add-button">Add</button>
 
-    <!-- Фильтры -->
-    <Filters />
+    <Filters 
+      @set-filter="handleSetFilter"
+    />
     
-    <!-- Список Туду -->
     <TodoList 
       :todos="items"
+      @delete-todo="handleDelete"
     />
   </main>
 </template>
