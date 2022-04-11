@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { useTodoStore } from './stores/todo';
-import TodoList from './components/TodoList.vue';
+import { useTodoStore } from './stores/todo'
+import TodoList from './components/TodoList.vue'
 import Filters from './components/Filters.vue'
 
 // вызываем инстанс стора для извлечения 
