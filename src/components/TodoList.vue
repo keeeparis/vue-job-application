@@ -22,8 +22,10 @@ const store = useTodoStore()
       <!-- чекбокс меняет свойство active у туду -->
       <input 
         type="checkbox" 
-        class="checkbox" 
+        class="checkbox"
         v-model="todo.active"
+        :true-value="false"
+        :false-value="true"
       >
       <p class="index">{{ index + 1 }}.</p>
       <p class="text">{{ todo.text }}</p>
@@ -61,8 +63,12 @@ const store = useTodoStore()
   font-size: 1.1em;
 }
 
-.item.active p {
+.item p {
   text-decoration: line-through;
+}
+
+.item.active p {
+  text-decoration: none;
 }
 
 .checkbox {

@@ -26,9 +26,9 @@ const items = computed(() => {
   return store.todo.filter((item) => {
     switch (store.filter) {
       case 'active':
-        return !item.active;
-      case 'completed':
         return item.active;
+      case 'completed':
+        return !item.active;
       default:
         return true
     }
